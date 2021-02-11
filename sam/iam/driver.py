@@ -14,7 +14,7 @@ def get_saml_response(driver, debug=False, sleeptime=0.5):
                 if debug == True:
                     print("Saml matches: " + str(entry))
                 from pygrok import Grok
-                pattern = '%{GREEDYDATA}SAMLResponse=%{DATA:samlresponse}"%{GREEDYDATA}'
+                pattern = '%{GREEDYDATA}SAMLResponse=%{DATA:samlresponse}&%{GREEDYDATA}"%{GREEDYDATA}'
                 grok = Grok(pattern)
                 saml_resp_enc = grok.match(str(entry))['samlresponse']
                 saml_resp_dec = unquote(saml_resp_enc)
