@@ -24,7 +24,7 @@ def __click_output(debug, echo_env, response):
         click.secho('aws_access_key_id = {}'.format(response['Credentials']['AccessKeyId']))
         click.secho('aws_secret_access_key = {}'.format(response['Credentials']['SecretAccessKey']))
         click.secho('aws_session_token = {}'.format(response['Credentials']['SessionToken']))
-        click.secho('region = us-east-1')
+        click.secho('region = af-south-1')
         click.secho()
         click.secho("=" * 30)
         click.secho("#AWS ENV VARIABLES")
@@ -32,13 +32,13 @@ def __click_output(debug, echo_env, response):
         click.secho('export AWS_ACCESS_KEY_ID={}'.format(response['Credentials']['AccessKeyId']))
         click.secho('export AWS_SECRET_ACCESS_KEY={}'.format(response['Credentials']['SecretAccessKey']))
         click.secho('export AWS_SESSION_TOKEN={}'.format(response['Credentials']['SessionToken']))
-        click.secho('export AWS_DEFAULT_REGION=us-east-1')
+        click.secho('export AWS_DEFAULT_REGION=af-south-1')
     if echo_env is True:
         click.secho('=' * 100, fg='blue')
         click.secho('export AWS_ACCESS_KEY_ID={}'.format(response['Credentials']['AccessKeyId']))
         click.secho('export AWS_SECRET_ACCESS_KEY={}'.format(response['Credentials']['SecretAccessKey']))
         click.secho('export AWS_SESSION_TOKEN={}'.format(response['Credentials']['SessionToken']))
-        click.secho('export AWS_DEFAULT_REGION=us-east-1')
+        click.secho('export AWS_DEFAULT_REGION=af-south-1')
         click.secho('=' * 100, fg='blue')
 
 
@@ -52,7 +52,7 @@ def __console_output(debug, echo_env, response):
         print('aws_access_key_id = {}'.format(response['Credentials']['AccessKeyId']))
         print('aws_secret_access_key = {}'.format(response['Credentials']['SecretAccessKey']))
         print('aws_session_token = {}'.format(response['Credentials']['SessionToken']))
-        print('region = us-east-1')
+        print('region = af-south-1')
         print()
         print("=" * 30)
         print("#AWS ENV VARIABLES")
@@ -60,13 +60,13 @@ def __console_output(debug, echo_env, response):
         print('export AWS_ACCESS_KEY_ID={}'.format(response['Credentials']['AccessKeyId']))
         print('export AWS_SECRET_ACCESS_KEY={}'.format(response['Credentials']['SecretAccessKey']))
         print('export AWS_SESSION_TOKEN={}'.format(response['Credentials']['SessionToken']))
-        print('export AWS_DEFAULT_REGION=us-east-1')
+        print('export AWS_DEFAULT_REGION=af-south-1')
     if echo_env is True:
         print('=' * 100)
         print('export AWS_ACCESS_KEY_ID={}'.format(response['Credentials']['AccessKeyId']))
         print('export AWS_SECRET_ACCESS_KEY={}'.format(response['Credentials']['SecretAccessKey']))
         print('export AWS_SESSION_TOKEN={}'.format(response['Credentials']['SessionToken']))
-        print('export AWS_DEFAULT_REGION=us-east-1')
+        print('export AWS_DEFAULT_REGION=af-south-1')
         print('=' * 100)
 
 
@@ -105,7 +105,7 @@ def __get_saml_roles_providers_from_saml(saml):
     return role_provider_dict
 
 
-def get_creds_via_saml_request(role, saml, debug, echo_env, cli=True):
+def get_creds_via_saml_request(role, saml, debug, echo_env, duration_seconds, cli=True):
     import boto3
     client = boto3.client("sts")
     role_provider_dict = __get_saml_roles_providers_from_saml(saml)
@@ -113,7 +113,8 @@ def get_creds_via_saml_request(role, saml, debug, echo_env, cli=True):
     response = client.assume_role_with_saml(
             RoleArn=role,
             PrincipalArn=principal_arn,
-            SAMLAssertion=saml
+            SAMLAssertion=saml,
+            DurationSeconds=int(duration_seconds)
     )
 
     if cli is True:
