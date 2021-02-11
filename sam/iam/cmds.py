@@ -24,14 +24,17 @@ def iam():
               help='SSO url for idp which is ping url.')
 @click.option('-p', '-profile-name', 'profile_name',
               default="temp_sso_creds",
-              help='Default profile name that you want to store in credentials file. (default=temp_sso_creds')
+              help='Default profile name that you want to store in credentials file. (default=temp_sso_creds)')
+@click.option('-t', '-duration-seconds', 'duration_seconds',
+              default=3600,
+              help='Duration seconds set for session. (default=3600)')
 @click.option('-d', '--use-default-profile', 'default', is_flag=True, default=False,
               help='Forcefully use default profile for aws configuration. (default=False)')
 @click.option('-e', '--echo-creds', 'echo', is_flag=True, default=False,
               help='Echo creds to console. (default=False)')
 @load_config
 @load_logo
-def get_creds(debug, sso_url, profile_name, default, echo):
+def get_creds(debug, sso_url, profile_name, default, echo,duration_seconds):
     """
         Automatically retrieve aws credentials using chromedriver.
 
@@ -81,12 +84,12 @@ def get_creds(debug, sso_url, profile_name, default, echo):
         driver.quit()
 
     try:
-        role, creds = _process_roles(_roles, roles_acct_dict, saml_signoff, debug, echo)
+        role, creds = _process_roles(_roles, roles_acct_dict, saml_signoff, debug, echo, duration_seconds)
     except:
         cred_failure = True
 
     if cred_failure is True:
-        role, creds = _process_roles_no_acct_info(roles, saml_signoff, debug, echo)
+        role, creds = _process_roles_no_acct_info(roles, saml_signoff, debug, echo, duration_seconds)
 
     _process_credentials_file(role, profile_name, creds)
 
@@ -101,9 +104,12 @@ def get_creds(debug, sso_url, profile_name, default, echo):
               help='Forcefully use default profile for aws configuration. (default=False)')
 @click.option('-e', '--echo-creds', 'echo', is_flag=True, default=False,
               help='Echo creds to console. (default=False)')
+@click.option('-t', '-duration-seconds', 'duration_seconds',
+              default=3600,
+              help='Duration seconds set for session. (default=3600)')
 @load_config
 @load_logo
-def refresh(debug, sso_url, default, echo):
+def refresh(debug, sso_url, default, echo,duration_seconds):
     """
         Refresh samiam managed profile by either automatically retrieving credentials via chromedriver.
 
@@ -134,7 +140,7 @@ def refresh(debug, sso_url, default, echo):
         driver.close()
         driver.quit()
 
-    creds = get_creds_via_saml_request(role_arn, saml_signoff, debug, echo)
+    creds = get_creds_via_saml_request(role_arn, saml_signoff, debug, echo,duration_seconds)
 
     _process_credentials_file(role_arn, profile_name, creds)
 
